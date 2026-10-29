@@ -1,0 +1,9 @@
+# Dark theme matching the SOA Layout Agent app (ui_kit.py ports the same CSS
+# design tokens on top of these base colors) for look-and-feel parity.
+[theme]
+base = "dark"
+primaryColor = "#3b7be8"
+backgroundColor = "#0c0f18"
+secondaryBackgroundColor = "#111520"
+textColor = "#e8edf8"
+font = "sans serif"

@@ -1,0 +1,381 @@
+rule_version: policy-set-2026-07
+rules:
+- id: MEAL-CAP-DE-01
+  description: Meals per-line cap (DE)
+  type: amount_cap
+  applies_to:
+    category: meals
+    oe_code: DE
+  cap:
+    EUR: 6000.0
+- id: MEAL-CAP-US-01
+  description: Meals per-line cap (US)
+  type: amount_cap
+  applies_to:
+    category: meals
+    oe_code: US
+  cap:
+    USD: 75.0
+- id: MEAL-CAP-GB-01
+  description: Meals per-line cap (GB)
+  type: amount_cap
+  applies_to:
+    category: meals
+    oe_code: GB
+  cap:
+    GBP: 55.0
+- id: MEAL-DAILY-CAP-01
+  description: Meals daily aggregate cap - sums an employee's meal lines within a
+    rolling 1-day window, so 3+ per-line-compliant meals in one day can still be
+    caught even though each clears MEAL-CAP-*-01 individually (SPEND-01, reference
+    workbook PreApproval_Audit_Policy_Rules.xlsx).
+  type: cumulative_amount_cap
+  applies_to:
+    category: meals
+  window_days: 1
+  cap:
+    EUR: 200.0
+    USD: 225.0
+    GBP: 165.0
+- id: LODGING-CAP-01
+  description: Lodging per-night cap
+  type: amount_cap
+  applies_to:
+    category: lodging
+  cap:
+    EUR: 2500.0
+    USD: 275.0
+    GBP: 230.0
+- id: LODGING-ITEMISATION-01
+  description: Lodging always requires an itemised hotel folio/receipt
+  type: receipt_required_above
+  applies_to:
+    category: lodging
+  threshold:
+    EUR: 0.0
+    USD: 0.0
+    GBP: 0.0
+- id: LODGING-TAX-RATIO-01
+  description: Hotel tax/city-tax ratio sanity band (wider than standard VAT)
+  type: tax_ratio_check
+  applies_to:
+    category: lodging
+  min_ratio: 0.0
+  max_ratio: 0.3
+- id: LODGING-WEEKEND-EXTENSION-01
+  description: Weekend hotel nights flagged for business-purpose justification (possible
+    personal extension of a business trip)
+  type: weekend_spend_flag
+  applies_to:
+    category: lodging
+- id: LODGING-DAILY-CAP-01
+  description: Lodging daily aggregate cap - sums same-day lodging lines within a
+    rolling 1-day window, catching an extra same-night hotel fee logged as a
+    separate line that would otherwise clear LODGING-CAP-01 on its own
+    (SPEND-02, reference workbook PreApproval_Audit_Policy_Rules.xlsx).
+  type: cumulative_amount_cap
+  applies_to:
+    category: lodging
+  window_days: 1
+  cap:
+    EUR: 3000.0
+    USD: 330.0
+    GBP: 280.0
+- id: TRANSPORT-CAP-01
+  description: Ground transport per-line cap
+  type: amount_cap
+  applies_to:
+    category: transport
+  cap:
+    EUR: 12000.0
+    USD: 130.0
+    GBP: 110.0
+- id: TRANSPORT-ROUND-AMOUNT-01
+  description: Flags suspiciously round taxi/rideshare fares (cash-fraud signal)
+  type: round_amount_flag
+  applies_to:
+    category: transport
+  threshold:
+    EUR: 50.0
+    USD: 50.0
+    GBP: 50.0
+- id: AIRFARE-CAP-01
+  description: Economy/premium-economy airfare cap; business class requires separate
+    approval
+  type: amount_cap
+  applies_to:
+    category: airfare
+  cap:
+    EUR: 900.0
+    USD: 1000.0
+    GBP: 800.0
+- id: RENTAL-CAR-CAP-01
+  description: Rental car per-day cap
+  type: amount_cap
+  applies_to:
+    category: rental_car
+  cap:
+    EUR: 80.0
+    USD: 90.0
+    GBP: 70.0
+- id: ENTERTAINMENT-CAP-01
+  description: Client entertainment per-line cap (tighter; anti-bribery adjacent)
+  type: amount_cap
+  applies_to:
+    category: entertainment
+  cap:
+    EUR: 80.0
+    USD: 90.0
+    GBP: 75.0
+- id: ENTERTAINMENT-ITEMISATION-01
+  description: Client entertainment always requires an itemised receipt (attendee/purpose
+    documentation)
+  type: receipt_required_above
+  applies_to:
+    category: entertainment
+  threshold:
+    EUR: 0.0
+    USD: 0.0
+    GBP: 0.0
+- id: ENTERTAINMENT-WEEKEND-FLAG-01
+  description: Weekend client entertainment flagged for extra scrutiny
+  type: weekend_spend_flag
+  applies_to:
+    category: entertainment
+- id: FCPA-ENTERTAINMENT-ANNUAL-CUMULATIVE-01
+  description: FCPA/anti-bribery annual cumulative cap - one employee's total client
+    entertainment spend across ALL their submissions in a rolling 365-day window,
+    not just a single line (BR-TE-AU-04). A single entertainment charge can clear
+    ENTERTAINMENT-CAP-01 every time and still represent an improper ongoing
+    relationship with one recipient once aggregated over a year.
+  type: cumulative_amount_cap
+  applies_to:
+    category: entertainment
+  window_days: 365
+  cap:
+    EUR: 1800.0
+    USD: 2000.0
+    GBP: 1600.0
+- id: GIFTS-CAP-01
+  description: Client/business gift value cap
+  type: amount_cap
+  applies_to:
+    category: gifts
+  cap:
+    EUR: 50.0
+    USD: 55.0
+    GBP: 45.0
+- id: GIFTS-GOVERNMENT-OFFICIAL-PROHIBITED-01
+  description: Gifts to government officials / PEPs are prohibited outright (Solution
+    Design 10 - anti-bribery, PEP screening)
+  type: prohibited_category
+  applies_to:
+    category: gifts_to_government_official
+- id: GIFT-CARD-CASH-EQUIVALENT-PROHIBITED-01
+  description: Cash-equivalent gifts (gift cards, prepaid cards) are prohibited
+    outright regardless of amount (GIFT-02, reference workbook
+    PreApproval_Audit_Policy_Rules.xlsx). First-pass control - catches lines an
+    employee explicitly categorises as gift_card, not a gifts line whose
+    receipt happens to be a gift card; real content-level detection would need
+    vendor/description parsing this build does not do.
+  type: prohibited_category
+  applies_to:
+    category: gift_card
+- id: MISC-CAP-01
+  description: Misc/uncategorised per-line cap
+  type: amount_cap
+  applies_to:
+    category: misc
+  cap:
+    EUR: 40.0
+    USD: 45.0
+    GBP: 38.0
+- id: MISC-ITEMISATION-01
+  description: Uncategorised spend held to a tighter documentation bar
+  type: receipt_required_above
+  applies_to:
+    category: misc
+  threshold:
+    EUR: 15.0
+    USD: 15.0
+    GBP: 15.0
+- id: COMMS-CAP-01
+  description: Mobile roaming / internet / communications cap
+  type: amount_cap
+  applies_to:
+    category: communications
+  cap:
+    EUR: 60.0
+    USD: 65.0
+    GBP: 55.0
+- id: OFFICE-SUPPLIES-CAP-01
+  description: Office supplies per-line cap
+  type: amount_cap
+  applies_to:
+    category: office_supplies
+  cap:
+    EUR: 50.0
+    USD: 55.0
+    GBP: 45.0
+- id: COURIER-POSTAGE-CAP-01
+  description: Courier / postage / shipping cap
+  type: amount_cap
+  applies_to:
+    category: courier
+  cap:
+    EUR: 40.0
+    USD: 45.0
+    GBP: 35.0
+- id: TRAINING-CONFERENCE-CAP-01
+  description: Training / conference registration fee cap
+  type: amount_cap
+  applies_to:
+    category: training
+  cap:
+    EUR: 1500.0
+    USD: 1650.0
+    GBP: 1300.0
+- id: PROFESSIONAL-MEMBERSHIP-CAP-01
+  description: Professional membership / certification fee cap
+  type: amount_cap
+  applies_to:
+    category: membership
+  cap:
+    EUR: 400.0
+    USD: 440.0
+    GBP: 350.0
+- id: VISA-PASSPORT-FEE-CAP-01
+  description: Visa / passport / travel-document fee cap
+  type: amount_cap
+  applies_to:
+    category: visa_fees
+  cap:
+    EUR: 200.0
+    USD: 220.0
+    GBP: 180.0
+- id: TRAVEL-INSURANCE-CAP-01
+  description: Travel insurance premium cap
+  type: amount_cap
+  applies_to:
+    category: travel_insurance
+  cap:
+    EUR: 100.0
+    USD: 110.0
+    GBP: 90.0
+- id: ALCOHOL-PROHIBITED-01
+  description: Alcohol purchases are prohibited from reimbursement outright
+  type: prohibited_category
+  applies_to:
+    category: alcohol
+- id: PERSONAL-EXPENSE-PROHIBITED-01
+  description: Personal (non-business) expenses are never reimbursable
+  type: prohibited_category
+  applies_to:
+    category: personal_expense
+- id: POLITICAL-CONTRIBUTION-PROHIBITED-01
+  description: Political contributions/donations are prohibited (compliance)
+  type: prohibited_category
+  applies_to:
+    category: political_contribution
+- id: FINES-PENALTIES-PROHIBITED-01
+  description: Traffic/parking fines and penalties are never reimbursable
+  type: prohibited_category
+  applies_to:
+    category: fines_penalties
+- id: CASH-ADVANCE-EXCESS-01
+  description: Cash advance cap - amounts above this require separate finance approval
+  type: amount_cap
+  applies_to:
+    category: cash_advance
+  cap:
+    EUR: 500.0
+    USD: 550.0
+    GBP: 450.0
+- id: ITEMISATION-01
+  description: Any single line at/above this amount must have a receipt, regardless
+    of category
+  type: receipt_required_above
+  applies_to: {}
+  threshold:
+    EUR: 25.0
+    USD: 25.0
+    GBP: 25.0
+- id: ROUND-AMOUNT-GLOBAL-01
+  description: Flags any suspiciously round large amount, regardless of category
+  type: round_amount_flag
+  applies_to: {}
+  threshold:
+    EUR: 100.0
+    USD: 100.0
+    GBP: 100.0
+- id: TAX-RATIO-GLOBAL-01
+  description: General tax/amount ratio sanity band (typical VAT/sales-tax range)
+  type: tax_ratio_check
+  applies_to: {}
+  min_ratio: 0.0
+  max_ratio: 0.25
+- id: CURRENCY-MISMATCH-01
+  description: Flags a receipt whose currency doesn't match the submission's declared
+    currency
+  type: currency_mismatch_flag
+  applies_to: {}
+- id: LATE-SUBMISSION-01
+  description: Expense must be submitted within 90 days of the transaction date
+  type: late_submission_flag
+  applies_to: {}
+  max_days: 90
+
+# ---------------------------------------------------------------------------
+# Country-specific regulatory compliance - [FORWARD-LOOKING] (BR-TE-AU-04,
+# BR-TE-AU-09). Scoped to oe_code=CN/IN, which do not exist in
+# config/generator.yaml's oe_codes (["DE","US","GB"]) - so these can never
+# match a synthetic submission today, same treatment as the existing
+# "airfare"/"rental_car" forward-looking categories. Genuine fapiao/GST/VAT
+# field validation also needs extracted fields (fapiao number, GST/HSN code,
+# VAT registration id) this build's extraction schema does not capture -
+# these rules stand in for that using the closest existing rule types
+# (receipt_required_above / tax_ratio_check) as an honest placeholder, not a
+# real implementation of the country-specific field checks.
+# ---------------------------------------------------------------------------
+- id: FAPIAO-FIELD-CHECK-01
+  description: '[FORWARD-LOOKING] China fapiao field validation placeholder - real
+    implementation needs a dedicated fapiao-number extracted field, not yet in this
+    build''s extraction schema. oe_code=CN does not exist in generator.yaml, so this
+    can never fire against synthetic data today.'
+  type: receipt_required_above
+  applies_to:
+    oe_code: CN
+  threshold:
+    CNY: 0.0
+- id: GST-EINVOICE-CHECK-01
+  description: '[FORWARD-LOOKING] India GST / e-invoice field validation placeholder
+    - real implementation needs GSTIN/HSN extracted fields, not yet in this build''s
+    extraction schema. oe_code=IN does not exist in generator.yaml, so this can never
+    fire against synthetic data today.'
+  type: receipt_required_above
+  applies_to:
+    oe_code: IN
+  threshold:
+    INR: 0.0
+- id: VAT-RECOVERABILITY-EU-01
+  description: '[FORWARD-LOOKING] EU VAT-recoverability flag placeholder - real
+    implementation needs a VAT-registration-id extracted field and a recoverability
+    determination, not a tax-ratio band. Uses tax_ratio_check as the closest existing
+    mechanism; not a real VAT-recoverability check.'
+  type: tax_ratio_check
+  applies_to:
+    oe_code: EU
+  min_ratio: 0.0
+  max_ratio: 0.27
+- id: SUNSHINE-ACT-HCP-DISCLOSURE-01
+  description: '[FORWARD-LOOKING] US Sunshine Act HCP (healthcare-professional)
+    payment/transfer-of-value disclosure placeholder - real implementation needs a
+    recipient-type ("HCP") extracted/entered field this build does not capture.
+    GIFTS-GOVERNMENT-OFFICIAL-PROHIBITED-01 (prohibited_category) is the closest
+    ACTIVE analogue today, for the distinct case of government-official gifts.'
+  type: receipt_required_above
+  applies_to:
+    oe_code: US
+    category: gifts
+  threshold:
+    USD: 0.0

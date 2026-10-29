@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Surfaces - layered depth, darkest to lightest */
+  --color-bg-base: #0a0d15;
+  --color-bg-surface: #10141f;
+  --color-bg-elevated: #161c2b;
+  --color-bg-overlay: #1d2436;
+  --color-bg-hover: #232b40;
+
+  --color-border: #232c3e;
+  --color-border-subtle: #1a2130;
+  --color-border-focus: #3b6bca;
+
+  /* Brand */
+  --color-accent: #3b7be8;
+  --color-accent-bright: #60a5fa;
+  --color-accent-dim: #2d6dd4;
+  --color-accent-glow: #3b7be833;
+  --color-purple: #8b5cf6;
+  --color-purple-bright: #a78bfa;
+
+  /* Text */
+  --color-text-primary: #eef2fb;
+  --color-text-secondary: #93a5c4;
+  --color-text-muted: #56698a;
+  --color-text-faint: #3a475f;
+
+  /* Semantic */
+  --color-success: #22c55e;
+  --color-success-bg: #0d2218;
+  --color-success-border: #1f5c3b;
+  --color-success-text: #6ee7a3;
+
+  --color-warning: #f59e0b;
+  --color-warning-bg: #1e1607;
+  --color-warning-border: #8a5a0e;
+  --color-warning-text: #fbbf50;
+
+  --color-error: #ef4444;
+  --color-error-bg: #1f0808;
+  --color-error-border: #8a2323;
+  --color-error-text: #fb9a9a;
+
+  --color-info: #3b82f6;
+  --color-info-bg: #0c1a2e;
+  --color-info-border: #1e3f6e;
+  --color-info-text: #8fbdfa;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-elevated: 0 4px 24px -4px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.03);
+  --shadow-popover: 0 12px 40px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+:root {
+  /* This app is dark-theme only (no light mode) - without this, native
+     controls (select dropdown popups, scrollbars, date pickers) render with
+     the OS's default light chrome regardless of the select element's own
+     dark background/text classes, since the browser has no other signal
+     that the page prefers dark. */
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, #3b7be814, transparent),
+    radial-gradient(ellipse 700px 500px at 100% 0%, #8b5cf611, transparent);
+  background-attachment: fixed;
+}
+
+* { scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-border-focus); }
+
+code, kbd {
+  font-family: var(--font-mono);
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation: fade-in-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--color-bg-elevated) 25%, var(--color-bg-hover) 50%, var(--color-bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}

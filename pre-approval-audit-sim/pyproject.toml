@@ -1,0 +1,60 @@
+[project]
+name = "pre-approval-audit-sim"
+version = "0.1.0"
+description = "Agentic Pre-Approval Expense Audit Platform - Simulation Mode (Phase 0)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "numpy>=1.26",
+    # Orchestration & agents (used from Phase 2/3 onward; pinned here so the
+    # environment is stable across the whole build).
+    "langgraph>=0.2",
+    "anthropic>=0.34",
+    # Azure OpenAI vision extractor (GPT-4.1 etc.) - imported lazily by
+    # AzureOpenAIVisionExtractor only, mirroring the anthropic/psycopg pattern.
+    "openai>=1.40",
+    # PDF-receipt rasterisation for real vision calls (scanned_pdf format) -
+    # vision chat-completions APIs accept raster images only, never raw PDF.
+    "pdfplumber>=0.11",
+    # Postgres backend (the pinned production path). psycopg is imported lazily
+    # by the postgres backend only, so the sqlite_local fallback runs without a
+    # working libpq.
+    "psycopg[binary]>=3.1",
+    "pillow>=12.3.0",
+    "langgraph-checkpoint-sqlite>=3.1.0",
+    # Real integration connectors (adapters/connectors/) - Concur/Cytric/
+    # Workday/Oracle EBS OAuth2 + REST calls, imported lazily by each Real*
+    # connector only (same pattern as anthropic/psycopg above). Already an
+    # indirect dependency via FastAPI's TestClient; promoted to a direct
+    # runtime dependency now that the real connectors need it too.
+    "httpx>=0.27",
+    # Required by FastAPI's Form(...)/UploadFile routes (e.g. the
+    # admin_devtools.py receipt-upload endpoint).
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "ruff>=0.5",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["config", "common", "data", "data.backends", "integration"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

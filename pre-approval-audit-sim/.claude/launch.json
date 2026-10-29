@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "expense-audit-api",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "integration.app:app", "--host", "127.0.0.1", "--port", "8002"],
+      "port": 8002
+    },
+    {
+      "name": "expense-audit-web",
+      "runtimeExecutable": ".node-runtime/node-v20.20.2-win-x64/npm.cmd",
+      "runtimeArgs": ["--prefix", "web", "run", "dev"],
+      "port": 5173
+    }
+  ]
+}

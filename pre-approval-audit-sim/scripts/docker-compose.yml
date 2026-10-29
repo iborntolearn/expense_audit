@@ -1,0 +1,23 @@
+# Pinned production data stack (Build Brief 4): Postgres + pgvector.
+# Not used by the sqlite_local dev fallback. When Docker is available:
+#   docker compose -f scripts/docker-compose.yml up -d
+#   set STORAGE_BACKEND=postgres in .env
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: audit
+      POSTGRES_PASSWORD: audit
+      POSTGRES_DB: audit
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U audit -d audit"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

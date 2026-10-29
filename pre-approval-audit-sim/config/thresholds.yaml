@@ -1,0 +1,25 @@
+# Accuracy / latency gate thresholds.
+# Source: Feasibility Spike Plan v1.1, Section 6.
+# These are read by the Phase 5 reporting harness. In simulation mode meeting
+# them is INFORMATIVE, not a gate (Build Brief 9) - the real gate is real-data
+# validation, which is deferred (Solution Design 12).
+
+extraction:
+  # Field-level accuracy for vendor, date, amount.
+  field_accuracy_min: 0.90
+
+duplicate_detection:
+  recall_min: 0.90
+  false_positive_rate_max: 0.05
+
+latency:
+  # p95 extraction latency per receipt, seconds.
+  extraction_p95_seconds_max: 15
+  # End-to-end pipeline SLA target (Solution Design 3), seconds.
+  pipeline_p95_seconds_max: 180
+
+confidence:
+  # Qualitative: low-confidence extractions must show materially lower accuracy
+  # than high-confidence ones. Encoded as a minimum accuracy gap for reporting.
+  min_accuracy_gap: 0.15
+  low_confidence_cutoff: 0.70

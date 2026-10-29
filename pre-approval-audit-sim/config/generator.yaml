@@ -1,0 +1,38 @@
+# Synthetic data generator configuration (Detailed Technical Design 2.4).
+# Every knob the generator uses lives here - nothing hardcoded in generator/.
+
+# Number of submissions to generate per run.
+volume: 200
+
+# Deterministic runs: same seed + same config => identical output + ground truth.
+seed: 20260716
+
+# Deliberate anomaly injection. Each is a fraction of `volume`. Because anomalies
+# are injected by construction, ground truth is exact - no manual labelling.
+anomaly_injection:
+  duplicate_rate: 0.08            # near-duplicates of an earlier submission
+  policy_violation_rate: 0.12     # amounts placed above a specific rule cap
+  manipulated_receipt_rate: 0.05  # subtotal mismatch / tamper markers
+  peer_outlier_rate: 0.05         # spend far above what peers in the same OE+category typically spend
+  peer_outlier_multiplier: 6.0    # how far above the normal-amount range a peer-outlier submission's spend is drawn
+
+# Distribution controls (stand in for a real OE's expected mix).
+currency_mix: ["EUR", "USD", "GBP"]
+# A handful of real translated-label languages (generator/receipts.py::_LABELS)
+# - not a literal claim of 90+ languages, which is a property of the real
+# vision model's training breadth, not something this offline synthetic
+# generator can itself exercise at that scale.
+language_mix: ["en", "de", "fr", "es", "it"]
+receipt_format_mix: ["photo", "scanned_pdf", "e_receipt"]
+
+# Expense categories the generator draws from (must exist in policy_rules.yaml
+# where a cap applies).
+categories: ["meals", "lodging", "transport", "entertainment", "misc"]
+
+# Number of line items per submission (inclusive range).
+lines_per_submission:
+  min: 1
+  max: 4
+
+# Operating entities to spread submissions across (drives OE-specific rules).
+oe_codes: ["DE", "US", "GB"]

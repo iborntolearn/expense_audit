@@ -1,0 +1,94 @@
+engine: langgraph
+node_timeouts:
+  ingest: 5.0
+  extraction: 20.0
+  verification: 20.0
+  policy: 5.0
+  risk_scoring: 5.0
+  decision_writeback: 10.0
+retry:
+  max_retries: 2
+  backoff_seconds:
+  - 2.0
+  - 6.0
+extraction:
+  provider: simulated
+  confidence_cutoff: 0.7
+  simulation:
+    base_confidence: 0.97
+    error_rate: 0.06
+    illegible_rate: 0.02
+    low_conf_range:
+    - 0.3
+    - 0.65
+    illegible_conf_max: 0.25
+verification:
+  subtotal_tolerance_pct: 10.0
+  duplicate_similarity_threshold: 0.9
+  duplicate_top_k: 10
+  duplicate_amount_tolerance_pct: 3.0
+  duplicate_require_same_employee: true
+  velocity_window_days: 1
+  velocity_count_threshold: 3
+  split_window_days: 3
+  forensics:
+    enabled: true
+    require_camera_exif_for_formats:
+    - photo
+    ela_quality: 90
+    ela_diff_threshold: 15
+    ela_region_frac_threshold: 0.02
+    vision_second_opinion_enabled: false
+    vision_second_opinion_gate: on_suspicion
+    vision_ai_generated_threshold: 0.5
+  peer_outlier:
+    enabled: true
+    # How many standard deviations above the peer-group mean (same OE +
+    # category, every other employee) a submission's category spend must be
+    # before it's flagged - independent of any flat authored cap.
+    z_score_threshold: 2.5
+    # Minimum number of OTHER employees' lines required in that OE+category
+    # before a baseline is considered meaningful - guards against flagging
+    # off a thin/near-empty sample (e.g. a brand-new OE or category).
+    min_peer_sample_size: 10
+  merchant_network:
+    enabled: true
+    # A merchant with <= this many prior submissions, suddenly used by >=
+    # new_merchant_employee_spread_threshold distinct employees within this
+    # many days, is flagged as a possible collusion/shell-vendor signal.
+    new_merchant_employee_spread_window_days: 7
+    new_merchant_employee_spread_threshold: 5
+    new_merchant_max_prior_submissions: 3
+    # >= this many distinct employees filing an amount within
+    # near_cap_tolerance_pct below the applicable cap, for the same
+    # vendor+category+OE within this window, is cross-employee structuring.
+    near_cap_clustering_window_days: 30
+    near_cap_tolerance_pct: 10.0
+    near_cap_min_distinct_employees: 3
+    # difflib.SequenceMatcher ratio threshold for a vendor name to count as a
+    # fuzzy match against an already-blocked registry entry.
+    fuzzy_match_threshold: 0.85
+risk:
+  weights:
+    policy_violation: 0.5
+    duplicate_match: 0.4
+    duplicate_match_structured: 0.3
+    authenticity_flag: 0.3
+    subtotal_variance: 0.3
+    low_confidence: 0.2
+    velocity_flag: 0.3
+    split_transaction_flag: 0.5
+    merchant_blocklist: 0.8
+    compliance_cumulative: 0.4
+    forensics_strong_signal: 0.4
+    peer_amount_outlier: 0.4
+    merchant_network_flag: 0.4
+  auto_approve_cutoff: 0.2
+  auto_reject_cutoff: 0.75
+  model_version: risk-router-v1
+assistant:
+  # "simulated" (default): deterministic keyword-matching engine, no API
+  # key, no cost. "anthropic" | "azure_openai": real LLM tool-calling
+  # reasoning over the audit data, reusing the same keys/model settings as
+  # the vision extractor above.
+  provider: simulated

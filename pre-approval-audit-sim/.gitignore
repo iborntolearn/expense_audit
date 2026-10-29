@@ -1,0 +1,12 @@
+.env
+.data/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+.ruff_cache/
+.node-runtime/
+web/node_modules/
+web/dist/

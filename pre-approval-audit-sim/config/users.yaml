@@ -1,0 +1,33 @@
+# Local operator accounts (Solution Design 10 - SSO/RBAC baseline-only in this
+# build). Edit via System admin -> Users, not by hand-computing hashes here.
+#
+# Default seeded accounts - CHANGE THESE before sharing this app with anyone:
+#   admin    / ChangeMe-Admin1!    (role: admin    - global super-admin, oe_code: null -
+#                                   full access incl. Settings/System admin across every OE)
+#   user     / ChangeMe-User1!     (role: user     - business pages only, scoped to oe_code: DE)
+#   auditor  / ChangeMe-Auditor1!  (role: auditor  - read-only: Dashboard, Expense reports
+#                                   with no approve/reject, Reports & exports incl. compliance
+#                                   packs - BR-TE-AU-10 - scoped to oe_code: US)
+#
+# oe_code: null on a role=admin account makes it a GLOBAL admin (sees/manages
+# every OE); an admin account WITH an oe_code is an "OE admin" scoped to just
+# that one operating entity. user/auditor accounts always carry a real oe_code.
+users:
+- username: admin
+  display_name: Admin
+  role: admin
+  oe_code: null
+  salt: c24441da6e8ca3a678854f9ac93dd6e0
+  password_hash: 8e9b507b0be6813f72f41770cce8a733d102a962381b820e12319a3194fcf767
+- username: user
+  display_name: Standard User
+  role: user
+  oe_code: DE
+  salt: 44cf62f45f412c8d6d1ffa1d680878fd
+  password_hash: e3fbfb56cee09c9965ffa41918c4b423d7f20fb26c5b0f5f2573b20270e71cb0
+- username: auditor
+  display_name: External Auditor
+  role: auditor
+  oe_code: US
+  salt: 536c7f4059a1357aebad36d12e049685
+  password_hash: b2b0f16e65c45a080380c9113167bfc82f9240d7006b467482dff7ce908865d6

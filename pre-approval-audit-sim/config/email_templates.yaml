@@ -1,0 +1,65 @@
+# Auditor-to-traveller email template library (BR-TE-AU-13). SIMULATED - no
+# real SMTP send exists in this build (same integration-seam treatment as the
+# real T&E connector); this renders the subject/body for the reviewer to copy,
+# it does not actually deliver anything. Edit via System admin -> Email
+# templates. Placeholders: {employee_id}, {submission_id}, {amount},
+# {currency}, {reason}.
+templates:
+- name: missing_receipt
+  subject: 'Action required: receipt needed for expense report {submission_id}'
+  body: |
+    Hi {employee_id},
+
+    We're unable to complete the audit of your expense report {submission_id}
+    because a required receipt is missing or unreadable.
+
+    Please reply to this email with a clear copy of the receipt for the
+    flagged line ({amount} {currency}) at your earliest convenience.
+
+    Reason flagged: {reason}
+
+    Thank you,
+    Travel & Expense Audit Team
+- name: justification_request
+  subject: 'Justification needed for expense report {submission_id}'
+  body: |
+    Hi {employee_id},
+
+    Your expense report {submission_id} was flagged during audit for the
+    following reason: {reason}
+
+    Amount in question: {amount} {currency}
+
+    Please reply with a business justification for this expense, or let us
+    know if this was submitted in error.
+
+    Thank you,
+    Travel & Expense Audit Team
+- name: recovery_letter
+  subject: 'Expense recovery notice - report {submission_id}'
+  body: |
+    Hi {employee_id},
+
+    Following our audit review of expense report {submission_id}, we have
+    determined that {amount} {currency} is not reimbursable and must be
+    recovered.
+
+    Reason: {reason}
+
+    Please contact Payroll/Finance to arrange recovery. This may be applied
+    against a future reimbursement or payroll deduction per company policy.
+
+    Thank you,
+    Travel & Expense Audit Team
+- name: general_inquiry
+  subject: 'Question about expense report {submission_id}'
+  body: |
+    Hi {employee_id},
+
+    We have a question about your expense report {submission_id}
+    ({amount} {currency}): {reason}
+
+    Please reply at your earliest convenience.
+
+    Thank you,
+    Travel & Expense Audit Team

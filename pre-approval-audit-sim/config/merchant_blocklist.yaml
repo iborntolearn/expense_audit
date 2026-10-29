@@ -1,0 +1,10 @@
+entries:
+- name: Sanctioned Trading Co
+  type: sanctioned
+  reason: Simulated OFAC SDN list entry
+- name: Alrashid Trading
+  type: sanctioned
+  reason: Simulated EU sanctions list entry
+- name: IRAN Petrol Chem
+  type: pep
+  reason: Simulated watchlist entry
